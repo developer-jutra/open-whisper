@@ -16,6 +16,10 @@ macos:
 linux:
 `sudo apt-get install portaudio19-dev`
 
+WSL:
+Jeśli uruchamiasz repozytorium na WSL mogą być potrzebne dodatkowe kroki, aby WSL poprawnie widział urządzania audio.
+Pomocne mogą być kroki z tego wątku: https://github.com/microsoft/WSL/discussions/9624#discussioncomment-14163483
+
 ## tkinter
 
 upewnij się że tkinter jest zainstalowany:
@@ -24,6 +28,9 @@ macos:
 `brew install tcl-tk`
 lub
 `brew install python-tk@3.13`
+
+linux:
+`sudo apt-get install python3-tk`
 
 ## python
 
@@ -35,6 +42,15 @@ source .venv/bin/activate  # linux/macos
 .venv\Scripts\activate     # windows
 pip install -r requirements.txt
 ```
+
+## uruchamiania lokalnie
+
+w terminalu:
+```bash
+python app.py
+```
+
+Jeśli korzystasz z VSCode możesz skorzystać z `launch.json` z konfiguracją debugowania.
 
 ## bundle as dekstop app - `pyinstaller`
 
