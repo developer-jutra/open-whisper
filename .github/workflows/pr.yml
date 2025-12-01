@@ -12,7 +12,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.13" # Pinned to 3.13 due to numba incompatibility with 3.14
       - name: Install uv
         run: pip install uv
       - name: Install dependencies
