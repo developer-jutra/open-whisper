@@ -2,24 +2,23 @@ name: Ruff Lint
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-        cache: 'uv'
-    - name: Install uv
-      run: pip install uv
-    - name: Install dependencies
-      run: uv pip install -r requirements.txt --system
-    - name: Run Ruff Check
-      # This command now uses 'ruff check' to enforce both linting and formatting rules.
-      # The '--diff' flag makes the output more readable in CI, showing proposed changes.
-      # The '--exit-code 1' ensures the job fails if issues are found.
-      run: ruff check . --diff --exit-code 1
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install uv
+        run: pip install uv
+      - name: Install dependencies
+        run: uv pip install -r requirements.txt --system
+      - name: Run Ruff Check
+        # This command now uses 'ruff check' to enforce both linting and formatting rules.
+        # The '--diff' flag makes the output more readable in CI, showing proposed changes.
+        # The '--exit-code 1' ensures the job fails if issues are found.
+        run: ruff check . --diff --exit-code 1
