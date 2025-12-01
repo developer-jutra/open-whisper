@@ -1,15 +1,16 @@
-import tkinter as tk
-from tkinter import messagebox, ttk
-import pyaudio
-import wave
-import os
-import time
-import threading
-import queue
-import sys
 import logging
 import logging.handlers
+import os
+import queue
+import sys
+import threading
+import time
+import tkinter as tk
+import wave
+from tkinter import messagebox, ttk
 from typing import TextIO
+
+import pyaudio
 
 # --- Global Configuration ---
 APP_TITLE = "Azor Transcriber"
@@ -20,8 +21,7 @@ LOG_FILENAME = "transcriber.log"
 
 # --- Logging Setup ---
 class StreamToLogger(TextIO):
-    """
-    Fake file-like stream object that redirects writes to a logger instance.
+    """Fake file-like stream object that redirects writes to a logger instance.
     This captures stdout/stderr, including print() statements.
     """
 
@@ -99,8 +99,7 @@ def output_filename() -> str:
 
 
 def transcribe_audio(audio_path: str, model_name: str) -> str:
-    """
-    Loads the Whisper model and transcribes the audio file.
+    """Loads the Whisper model and transcribes the audio file.
     This function is blocking and should be run in a separate thread.
     """
     try:
@@ -110,7 +109,7 @@ def transcribe_audio(audio_path: str, model_name: str) -> str:
         logging.info(f"Using device: {device}")
 
         asr_pipeline = pipeline(
-            "automatic-speech-recognition", model=model_name, device=device
+            "automatic-speech-recognition", model=model_name, device=device,
         )
 
         logging.info(f"Starting transcription for file: {audio_path}...")
@@ -126,7 +125,7 @@ def transcribe_audio(audio_path: str, model_name: str) -> str:
         return f"ERROR: Audio file not found at path: {audio_path}"
     except Exception as e:
         logging.error(
-            f"An unexpected error occurred during transcription: {e}", exc_info=True
+            f"An unexpected error occurred during transcription: {e}", exc_info=True,
         )
         return f"An unexpected error occurred during transcription: {e}"
 
@@ -166,7 +165,7 @@ class AudioRecorderApp:
         # Configure the dark background for the Notebook tabs
         style.configure("TNotebook", background="#121212", borderwidth=0)
         style.configure(
-            "TNotebook.Tab", background="#1E1E1E", foreground="white", borderwidth=0
+            "TNotebook.Tab", background="#1E1E1E", foreground="white", borderwidth=0,
         )
         style.map(
             "TNotebook.Tab",
@@ -224,13 +223,13 @@ class AudioRecorderApp:
 
         # 1. Transcriber Tab
         self.transcriber_frame = tk.Frame(
-            self.notebook, bg="#121212"
+            self.notebook, bg="#121212",
         )  # Set dark background for frame
         self.notebook.add(self.transcriber_frame, text="Transcriber")
 
         # 2. History Tab
         self.history_frame = tk.Frame(
-            self.notebook, bg="#121212"
+            self.notebook, bg="#121212",
         )  # Consistent dark background
         self.notebook.add(self.history_frame, text="Transcription History")
 
@@ -302,13 +301,13 @@ class AudioRecorderApp:
         # Initial text insertion for tk.Text
         self.transcription_display.config(state=tk.NORMAL)
         self.transcription_display.insert(
-            tk.END, "Transcribed text will appear here. Select it to copy."
+            tk.END, "Transcribed text will appear here. Select it to copy.",
         )
         self.transcription_display.config(state=tk.DISABLED)
 
         # Exit Button
         self.exit_button = ttk.Button(
-            master, text="Exit", command=self.on_closing, style="Dark.TButton"
+            master, text="Exit", command=self.on_closing, style="Dark.TButton",
         )
         self.exit_button.pack(pady=10)
 
@@ -355,14 +354,14 @@ class AudioRecorderApp:
             self.transcription_display.config(state=tk.NORMAL)
             self.transcription_display.delete("1.0", tk.END)
             self.transcription_display.insert(
-                tk.END, "Recording in progress... (max 30s)"
+                tk.END, "Recording in progress... (max 30s)",
             )
             self.transcription_display.config(state=tk.DISABLED)
 
             self.read_chunk()
             # Set a timer for automatic stop
             self.record_timer_id = self.master.after(
-                MAX_RECORD_DURATION * 1000, self.auto_stop_recording
+                MAX_RECORD_DURATION * 1000, self.auto_stop_recording,
             )
 
         except Exception as e:
@@ -384,7 +383,7 @@ class AudioRecorderApp:
                 data = self.stream.read(CHUNK, exception_on_overflow=False)
                 self.frames.append(data)
                 self.master.after(1, self.read_chunk)
-            except IOError as e:
+            except OSError as e:
                 logging.error(f"Stream read IOError: {e}")
                 self.stop_recording()
 
@@ -392,7 +391,7 @@ class AudioRecorderApp:
         """Automatically stops recording after MAX_RECORD_DURATION expires."""
         if self.recording:
             logging.info(
-                f"Automatic stop triggered after {MAX_RECORD_DURATION} seconds."
+                f"Automatic stop triggered after {MAX_RECORD_DURATION} seconds.",
             )
             self.stop_recording()
             messagebox.showinfo(
@@ -439,13 +438,13 @@ class AudioRecorderApp:
             self.transcription_display.config(state=tk.NORMAL)
             self.transcription_display.delete("1.0", tk.END)
             self.transcription_display.insert(
-                tk.END, "Transcription in progress (this may take a while)..."
+                tk.END, "Transcription in progress (this may take a while)...",
             )
             self.transcription_display.config(state=tk.DISABLED)
 
             # === START TRANSCRIPTION IN A THREAD ===
             transcription_thread = threading.Thread(
-                target=self.run_transcription, args=(WAVE_OUTPUT_FILENAME,), daemon=True
+                target=self.run_transcription, args=(WAVE_OUTPUT_FILENAME,), daemon=True,
             )
             transcription_thread.start()
             logging.info("Transcription thread started.")
@@ -456,19 +455,17 @@ class AudioRecorderApp:
             logging.error(f"Error saving wave file: {e}", exc_info=True)
 
     def run_transcription(self, audio_path):
-        """
-        Method executed in a separate thread.
+        """Method executed in a separate thread.
         Calls transcription and puts the result in the queue.
         """
         logging.info(
-            f"Running transcription for {audio_path} in thread: {threading.get_ident()}"
+            f"Running transcription for {audio_path} in thread: {threading.get_ident()}",
         )
         transcription = transcribe_audio(audio_path, MODEL_NAME)
         self.transcription_queue.put(transcription)
 
     def check_transcription_queue(self):
-        """
-        Checks the queue for transcription results.
+        """Checks the queue for transcription results.
         Run in the main GUI thread.
         """
         try:
@@ -497,7 +494,7 @@ class AudioRecorderApp:
                 self.copy_to_clipboard(result)
 
             self.record_button.config(
-                text="Record", state=tk.NORMAL
+                text="Record", state=tk.NORMAL,
             )  # Return to normal state
 
         except queue.Empty:

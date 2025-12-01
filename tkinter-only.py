@@ -1,9 +1,10 @@
-import tkinter as tk
-from tkinter import messagebox
-import pyaudio
-import wave
 import os
 import time
+import tkinter as tk
+import wave
+from tkinter import messagebox
+
+import pyaudio
 
 # --- Recording Configuration ---
 CHUNK = 1024  # Buffer size for data (chunk)
@@ -67,7 +68,7 @@ class AudioRecorderApp:
             )
 
             self.label.config(
-                text=f"Recording for {RECORD_SECONDS} seconds...", fg="red"
+                text=f"Recording for {RECORD_SECONDS} seconds...", fg="red",
             )
             self.record_button.config(state=tk.DISABLED)
 
@@ -80,7 +81,7 @@ class AudioRecorderApp:
             self.record_button.config(state=tk.NORMAL)
             self.label.config(text="Error! Check microphone/dependencies.", fg="black")
             messagebox.showerror(
-                "Audio Error", f"Could not open microphone stream: {e}"
+                "Audio Error", f"Could not open microphone stream: {e}",
             )
 
     def read_chunk(self):
