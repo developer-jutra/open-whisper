@@ -6,11 +6,11 @@ import os
 import time
 
 # --- Recording Configuration ---
-CHUNK = 1024          # Buffer size for data (chunk)
-FORMAT = pyaudio.paInt16 # 16-bit audio format
-CHANNELS = 1          # Mono
-RATE = 44100          # Sample rate (standard CD quality)
-RECORD_SECONDS = 5    # Recording duration in seconds
+CHUNK = 1024  # Buffer size for data (chunk)
+FORMAT = pyaudio.paInt16  # 16-bit audio format
+CHANNELS = 1  # Mono
+RATE = 44100  # Sample rate (standard CD quality)
+RECORD_SECONDS = 5  # Recording duration in seconds
 
 APP_TITLE = "Azor Transcriber"
 WAVE_OUTPUT_FILENAME = "output/recording.wav"
@@ -29,19 +29,24 @@ class AudioRecorderApp:
         self.is_pyaudio_initialized = True
 
         # --- GUI Elements ---
-        self.label = tk.Label(master, text="Ready to record.", font=('Arial', 12))
+        self.label = tk.Label(master, text="Ready to record.", font=("Arial", 12))
         self.label.pack(pady=20)
 
-        self.record_button = tk.Button(master, text=f"Record {RECORD_SECONDS} seconds", command=self.start_recording, 
-                                       bg="red", fg="white", font=('Arial', 14))
+        self.record_button = tk.Button(
+            master,
+            text=f"Record {RECORD_SECONDS} seconds",
+            command=self.start_recording,
+            bg="red",
+            fg="white",
+            font=("Arial", 14),
+        )
         self.record_button.pack(pady=10)
 
         self.exit_button = tk.Button(master, text="Exit", command=self.on_closing)
         self.exit_button.pack(pady=10)
-        
+
         # Ensure cleanup on window close
         master.protocol("WM_DELETE_WINDOW", self.on_closing)
-
 
     def start_recording(self):
         """Starts the audio recording process."""
@@ -50,18 +55,22 @@ class AudioRecorderApp:
 
         self.recording = True
         self.frames = []
-        
+
         try:
             # Open the audio stream
-            self.stream = self.p.open(format=FORMAT,
-                                     channels=CHANNELS,
-                                     rate=RATE,
-                                     input=True,
-                                     frames_per_buffer=CHUNK)
+            self.stream = self.p.open(
+                format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK,
+            )
 
-            self.label.config(text=f"Recording for {RECORD_SECONDS} seconds...", fg="red")
+            self.label.config(
+                text=f"Recording for {RECORD_SECONDS} seconds...", fg="red"
+            )
             self.record_button.config(state=tk.DISABLED)
-            
+
             # Use .after() for non-blocking chunk reading in the Tkinter main loop.
             self.start_time = time.time()
             self.read_chunk()
@@ -70,8 +79,10 @@ class AudioRecorderApp:
             self.recording = False
             self.record_button.config(state=tk.NORMAL)
             self.label.config(text="Error! Check microphone/dependencies.", fg="black")
-            messagebox.showerror("Audio Error", f"Could not open microphone stream: {e}")
-            
+            messagebox.showerror(
+                "Audio Error", f"Could not open microphone stream: {e}"
+            )
+
     def read_chunk(self):
         """Reads one chunk of audio data and schedules the next call."""
         # Only continue reading if recording is active and duration limit is not reached
@@ -79,7 +90,7 @@ class AudioRecorderApp:
             data = self.stream.read(CHUNK, exception_on_overflow=False)
             self.frames.append(data)
             # Schedule the next read based on chunk time to maintain real-time accuracy
-            self.master.after(int(CHUNK * 1000 / RATE), self.read_chunk) 
+            self.master.after(int(CHUNK * 1000 / RATE), self.read_chunk)
         else:
             self.stop_recording()
 
@@ -99,14 +110,17 @@ class AudioRecorderApp:
 
         # Save to WAVE file
         try:
-            with wave.open(WAVE_OUTPUT_FILENAME, 'wb') as wf:
+            with wave.open(WAVE_OUTPUT_FILENAME, "wb") as wf:
                 wf.setnchannels(CHANNELS)
                 wf.setsampwidth(self.p.get_sample_size(FORMAT))
                 wf.setframerate(RATE)
-                wf.writeframes(b''.join(self.frames))
+                wf.writeframes(b"".join(self.frames))
 
             self.label.config(text=f"Saved '{WAVE_OUTPUT_FILENAME}'", fg="green")
-            messagebox.showinfo("Success", f"Recording saved as:\n{os.path.abspath(WAVE_OUTPUT_FILENAME)}")
+            messagebox.showinfo(
+                "Success",
+                f"Recording saved as:\n{os.path.abspath(WAVE_OUTPUT_FILENAME)}",
+            )
 
         except Exception as e:
             self.label.config(text="File save error!", fg="black")
@@ -117,13 +131,14 @@ class AudioRecorderApp:
         # Ensure PyAudio is terminated only when exiting the application
         if self.is_pyaudio_initialized and self.p:
             self.p.terminate()
-            self.is_pyaudio_initialized = False # Prevent double termination
+            self.is_pyaudio_initialized = False  # Prevent double termination
         self.master.destroy()
+
 
 # --- Application Startup ---
 if __name__ == "__main__":
     root = tk.Tk()
     # Set fixed window size
-    root.geometry("400x200") 
+    root.geometry("400x200")
     app = AudioRecorderApp(root)
     root.mainloop()
