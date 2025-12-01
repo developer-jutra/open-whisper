@@ -22,5 +22,4 @@ jobs:
       - name: Run Ruff Check
         # This command now uses 'ruff check' to enforce both linting and formatting rules.
         # The '--diff' flag makes the output more readable in CI, showing proposed changes.
-        # The '--exit-code 1' ensures the job fails if issues are found.
-        run: ruff check . --diff --exit-code 1
+        run: ruff check . --diff
