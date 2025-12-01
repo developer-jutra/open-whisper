@@ -1,6 +1,6 @@
 [tool.ruff]
 line-length = 88
-select = ["E", "W", "F", "I", "C90", "N", "D", "UP", "ANN", "ASYNC", "S", "B", "A", "COM", "DJ", "DTZ", "ERA", "G", "ISC", "ICN", "PL", "PT", "Q", "RET", "RSE", "RUF", "SIM", "TID", "TCH", "INT", "ARG", "PTH", "TD", "FIX", "PD", "PG"]
+select = ["E", "W", "F", "I", "C90", "N", "D", "UP", "ANN", "ASYNC", "S", "B", "A", "COM", "DJ", "DTZ", "ERA", "G", "ISC", "ICN", "PL", "PT", "Q", "RET", "RSE", "RUF", "SIM", "TID", "TCH", "INT", "ARG", "PTH", "TD", "FIX", "PD"]
 ignore = [] # No ignores for now, can be added later if needed
 
 [tool.ruff.format]
