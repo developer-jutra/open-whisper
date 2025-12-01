@@ -1,0 +1,25 @@
+name: Ruff Lint
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13" # Pinned to 3.13 due to numba incompatibility with 3.14
+      - name: Install PortAudio
+        run: sudo apt-get update && sudo apt-get install -y portaudio19-dev
+      - name: Install uv
+        run: pip install uv
+      - name: Install dependencies
+        run: uv pip install -r requirements.txt --system
+      - name: Run Ruff Check
+        # This command now uses 'ruff check' to enforce both linting and formatting rules.
+        # The '--diff' flag makes the output more readable in CI, showing proposed changes.
+        run: ruff check . --diff

@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "C90", "N", "D", "UP", "ANN", "ASYNC", "S", "B", "A", "COM", "DJ", "DTZ", "ERA", "G", "ISC", "ICN", "PL", "PT", "Q", "RET", "RSE", "RUF", "SIM", "TID", "TCH", "INT", "ARG", "PTH", "TD", "FIX", "PD"]
+ignore = ["D203", "D213", "D401"] # D203 conflicts with D211, D213 conflicts with D212, D401 is just mad annoying
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+docstring-code-format = true
+line-ending = "auto"
